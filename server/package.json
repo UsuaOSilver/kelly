@@ -9,7 +9,8 @@
     "fixture": "tsx scripts/record-fixture.ts",
     "keys": "tsx scripts/gen-keys.ts",
     "elevenlabs:setup": "tsx scripts/setup-elevenlabs.ts",
-    "quicknode:setup": "tsx scripts/setup-quicknode.ts"
+    "quicknode:setup": "tsx scripts/setup-quicknode.ts",
+    "policy": "tsx scripts/set-policy.ts"
   },
   "dependencies": {
     "@circle-fin/x402-batching": "^4.0.0",

@@ -173,7 +173,8 @@ async function ensureDataFunds() {
   await vault.spend(vault.agent, cfg.dataTopUpUsd, memo);
   const ev = await awaitEvent(memo);
   if (!ev || ev.name !== "Spent") throw new Error("The vault did not release the data budget");
-  await depositToGateway(cfg.dataTopUpUsd);
+  const tx = await depositToGateway(cfg.dataTopUpUsd);
+  if (tx !== "sim") log({ kind: "info", title: `Deposited ${usd(cfg.dataTopUpUsd)} into Circle Gateway`, detail: "nanopayment balance", tx, source: "gateway" });
 }
 
 // ─────────────────────────────── tools ───────────────────────────────
@@ -276,7 +277,7 @@ export const propose = (args: { usd?: number; symbol?: string; side?: Side } = {
       `Kelly ${(sizing.kellyFull * 100).toFixed(1)}% × ${cfg.kellyFraction} × ${usd(st.balanceUsd)} bankroll = ${usd(sizing.raw)}${sizing.cappedBy.length ? ` · capped by ${sizing.cappedBy.join(", ")}` : ""} · index ${tp.data.indexChange1hPct >= 0 ? "+" : ""}${tp.data.indexChange1hPct.toFixed(2)}% in the last hour`,
       id,
     );
-    if (sizing.stake < 1) return { ok: false, say: `The right size here is under a dollar${sizing.cappedBy.includes("book depth") ? " because the order book is thin" : ""}, so it isn't worth placing.` };
+    if (sizing.stake < cfg.minStakeUsd) return { ok: false, say: `The right size here is under ${usd(cfg.minStakeUsd)}${sizing.cappedBy.includes("book depth") ? " because the order book is thin" : ""}, so it isn't worth placing.` };
 
     const intent = mk(sizing.stake);
     session.intents.set(id, intent);

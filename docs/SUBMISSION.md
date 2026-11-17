@@ -50,10 +50,10 @@ Passkey approval on the owner's phone so no server holds the owner key. An impli
 | Working demo or deployed app | Runs locally with `npm run setup && npm run demo`. **To do:** deploy, or state that the demo is local plus video. |
 | 2–3 minute video on YouTube or Drive | **To do:** record from `docs/DEMO.md`. Check the link opens in a private window. |
 | README with technical docs and architecture | Done |
-| Track: agent executes onchain transactions or reads the chain | Done on a local chain. **To do on Arc.** |
+| Track: agent executes onchain transactions or reads the chain | Done on Arc testnet |
 | Track: document the decision loop and safety limits | Done, README |
-| Arc: core onchain functionality on Arc | **To do:** `npm run deploy:arc` |
-| Arc: contract addresses and how Arc is used, in README | **To do:** paste the vault address into the README table |
+| Arc: core onchain functionality on Arc | Done. Vault `0xd6cd15d175608084e70bd1d1dbbe6538b4810630` |
+| Arc: contract addresses and how Arc is used, in README | Done |
 | ElevenLabs: API or SDK as a core feature | Code done. **To do:** create the agent |
 | ElevenLabs: video shows it working, with audio | **To do** |
 | ElevenLabs: README says which products and how | Done |
@@ -66,6 +66,5 @@ Passkey approval on the owner's phone so no server holds the owner key. An impli
 ## Before you submit
 
 1. Update the "Status of this build" note and the "What is real" table in the README to match what you actually switched on.
-2. Paste the Arc vault address and one explorer link to a `Spent` transaction into the README.
-3. Run `npm test` and `npm run smoke` one last time.
-4. Submit by **Friday Nov 20, 10:00 AM CST**. The deadline is noon; leave room.
+2. Run `npm test` and `npm run smoke` one last time.
+3. Submit by **Friday Nov 20, 10:00 AM CST**. The deadline is noon; leave room.

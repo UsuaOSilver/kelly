@@ -48,6 +48,7 @@ export const cfg = {
   maxPricePerCallUsd: Number(env("MAX_PRICE_PER_CALL_USD", "0.02")),
   dataBudgetPerSessionUsd: Number(env("DATA_BUDGET_PER_SESSION_USD", "0.50")),
   dataTopUpUsd: Number(env("DATA_TOPUP_USD", "1")),
+  minStakeUsd: Number(env("MIN_STAKE_USD", "1")),
   minEdge: Number(env("MIN_EDGE", "0.03")),
   maxEdge: Number(env("MAX_EDGE", "0.15")),
   kellyFraction: Number(env("KELLY_FRACTION", "0.5")),

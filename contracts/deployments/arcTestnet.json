@@ -1,0 +1,28 @@
+{
+  "network": "arcTestnet",
+  "chainId": 5042002,
+  "vault": "0xd6cd15d175608084e70bd1d1dbbe6538b4810630",
+  "usdc": "0x3600000000000000000000000000000000000000",
+  "owner": "0x6f63b6860A85952545CfFd1007d7D2442b0Aa7aA",
+  "agent": "0x5E646b2f313B616C181009038236C98F6f22Dbe7",
+  "venue": "0x6948A6cbCd4b047b3ae26D47718aa652C5294394",
+  "sellers": [
+    "0x410Bff17f660218fd340A5aCDDE96d595d2cab46",
+    "0x3186f4ffF05919B2D4e20C932b9C4D8C80F8F9FA",
+    "0x6e44f43A5c9593568355677Bfb706c7e98F39cc6"
+  ],
+  "policy": {
+    "autoApproveLimitUsdc": "0.5",
+    "dailyCapUsdc": "5",
+    "depositUsdc": "15"
+  },
+  "deployBlock": 72635157,
+  "deployedAt": "2026-11-17T03:59:09.433Z",
+  "txs": {
+    "deploy": "0x8098ce48dd5ba9f98f991ddcbd742a03a738e5d564b3017b5592db9cc19f9dc6",
+    "allowVenue": "0xe0a1f1fd3aaa7d27250cffed4cf4ccd6f98275344e8e98f69b7ef991c88b65d2",
+    "allowAgent": "0x7a1c640219c220eb230d4aaebb032fe7948fcde4beb4d34ad7f74df62a800390",
+    "approve": "0x1f113d306d7b13931be6540b29d92eb31becd303faf35645c0a4765c3c1ed33e",
+    "deposit": "0xd2d2ce5fed4ce43fb7eecbb138f735c93d9acd37b7fa1bc7737c172e2555f9c0"
+  }
+}

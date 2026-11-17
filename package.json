@@ -17,6 +17,7 @@
     "elevenlabs:setup": "npm --prefix server run elevenlabs:setup",
     "quicknode:setup": "npm --prefix server run quicknode:setup",
     "stream:replay": "npm --prefix server exec tsx scripts/replay-stream.ts",
-    "smoke": "server/scripts/smoke.sh"
+    "smoke": "server/scripts/smoke.sh",
+    "policy": "npm --prefix server run policy --"
   }
 }

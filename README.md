@@ -6,7 +6,7 @@ You ask, out loud, "what's mispriced in Bitcoin?" Kelly spends a few cents of US
 
 Built for the UBC 26 Hackathon, Nov 12–20, 2026. Track: **Agentic Payments and AI**. Chain award: **Best use of Arc**. Bounties: **Gemini Prediction Markets, QuickNode Streams, ElevenLabs**.
 
-> **Status of this build.** Everything runs end to end in demo mode and against the real contract on a local chain. Arc testnet deployment, Circle Gateway payments, the QuickNode Stream and the ElevenLabs agent are implemented but need keys and faucet funds to switch on. See [What is real and what is not](#what-is-real-and-what-is-not).
+> **Status of this build.** The vault is deployed on Arc testnet and the agent has run the full loop against it, paying for its data with real Circle Gateway nanopayments. The QuickNode Stream and the ElevenLabs voice agent are implemented but not yet switched on, and trades are paper fills. See [What is real and what is not](#what-is-real-and-what-is-not).
 
 ## The problem
 
@@ -119,9 +119,25 @@ Addresses on Arc testnet (chain 5042002):
 
 | Contract | Address |
 |---|---|
-| AllowanceVault | _not deployed yet: run `npm run deploy:arc`, then paste from `contracts/deployments/arcTestnet.json`_ |
+| AllowanceVault | [`0xd6cd15d175608084e70bd1d1dbbe6538b4810630`](https://explorer.testnet.arc.io/address/0xd6cd15d175608084e70bd1d1dbbe6538b4810630) |
+| Agent wallet | `0x5E646b2f313B616C181009038236C98F6f22Dbe7` |
+| Trading account (stake recipient) | `0x6948A6cbCd4b047b3ae26D47718aa652C5294394` |
 | USDC | `0x3600000000000000000000000000000000000000` |
 | Circle GatewayWallet | `0x0077777d7EBA4688BDeF3E311b846F25870A19B9` |
+
+Transactions from the first live run (Nov 16):
+
+| What happened | Transaction |
+|---|---|
+| Vault deployed | [`0x8098ce48…9dc6`](https://explorer.testnet.arc.io/tx/0x8098ce48dd5ba9f98f991ddcbd742a03a738e5d564b3017b5592db9cc19f9dc6) |
+| Agent asked for $0.82, over the limit: `SpendRequested` | [`0x2e0bcff5…b2d5`](https://explorer.testnet.arc.io/tx/0x2e0bcff5af2f04107b04f90240c74e0df8f93c6453fc21047cd134c93034b2d5) |
+| Owner approved: `Spent` | [`0x3dfe14c6…3509`](https://explorer.testnet.arc.io/tx/0x3dfe14c63edc094774aae6715fe57e535dd2d9847cca04d3c9ad5ffe0a7e3509) |
+| Small bet inside the limit: `Spent`, no approval | [`0xc628fe95…370e`](https://explorer.testnet.arc.io/tx/0xc628fe951fe6edf6b7949861bbd63804319efbf5ff6139b03689333c6b9f370e) |
+| Owner changed the policy | [`0x4f970d3c…3cb4`](https://explorer.testnet.arc.io/tx/0x4f970d3c57f349c92bb88225910560a652baa62c581ed77206aff4ecd6aa3cb4) |
+
+The $500 request has no transaction: the contract's `DailyCapExceeded` revert is caught in simulation, so the agent never pays gas for a refusal. Nanopayments settle in Circle Gateway batches and are identified by Gateway transfer ids in the activity feed, not by one transaction each.
+
+The testnet vault holds about 13 USDC, so its limits are scaled down: auto-approve $0.25, daily cap $5.
 
 ### QuickNode Streams
 
@@ -149,9 +165,9 @@ The agent has six client tools that run in the browser and call Kelly's API: `fi
 | Piece | Demo mode (default) | Live mode | Verified? |
 |---|---|---|---|
 | Gemini odds, books, index | live API, falls back to a recording | same | Yes, live |
-| Vault | in-memory mirror of the contract's rules | `AllowanceVault` on Arc testnet | Contract tested and run on a local chain. **Not yet deployed to Arc.** |
-| Data payments | real 402 handshake and EIP-712 signature, local facilitator | Circle Gateway on Arc testnet | Local facilitator tested. **Gateway path not yet run.** |
-| Vault events | in-process | QuickNode Stream | Filter and webhook tested with a local replay. **Stream not yet created.** |
+| Vault | in-memory mirror of the contract's rules | `AllowanceVault` on Arc testnet | Yes. Deployed, and the full loop has run against it. |
+| Data payments | real 402 handshake and EIP-712 signature, local facilitator | Circle Gateway on Arc testnet | Yes. Eight payments settled through Gateway in the first live run. |
+| Vault events | in-process | QuickNode Stream, or RPC polling | RPC polling verified on Arc. Filter and webhook tested with a local replay. **Stream not yet created.** |
 | Voice | typed console, browser or ElevenLabs TTS | ElevenLabs agent | **Agent not yet created; no key during the build.** |
 | Trades | paper fill against the live Gemini book | Gemini order API | Paper fills tested. **Live order code is written from the docs and has never run.** |
 
@@ -161,7 +177,7 @@ The header of the app shows which of these is live at any moment. Dashed chips a
 
 1. `npm run keys` generates wallets into `.env` and prints the addresses.
 2. Fund the **owner** and **agent** addresses with testnet USDC at [faucet.circle.com](https://faucet.circle.com) (choose Arc Testnet). The agent needs a little for gas.
-3. `npm run deploy:arc` deploys the vault, allowlists payees and deposits `VAULT_DEPOSIT_USDC`.
+3. `npm run deploy:arc` deploys the vault, allowlists payees and deposits `VAULT_DEPOSIT_USDC`. Change limits later with `npm run policy -- <autoApprove> <dailyCap>`.
 4. In `.env` set `CHAIN_MODE=rpc`, `PAY_MODE=gateway`, `DEPLOYMENT=arcTestnet`.
 5. Get a public URL (below), set `PUBLIC_URL`, then `npm run quicknode:setup`.
 6. Set `ELEVENLABS_API_KEY`, then `npm run elevenlabs:setup`.

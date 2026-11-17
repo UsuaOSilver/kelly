@@ -116,7 +116,14 @@ export async function depositToGateway(usdAmt: number): Promise<string> {
     simGateway.credit(agentAccount.address, usdAmt);
     return "sim";
   }
-  const r = await (await gw()).deposit(usdAmt.toFixed(6));
+  const client = await gw();
+  const before = Number((await client.getBalances()).gateway.formattedAvailable);
+  const r = await client.deposit(usdAmt.toFixed(6));
+  // The deposit is onchain immediately, but Gateway credits it a few seconds later. Paying before then fails to settle.
+  for (let i = 0; i < 60; i++) {
+    if (Number((await client.getBalances()).gateway.formattedAvailable) >= before + usdAmt - 1e-9) break;
+    await new Promise((res) => setTimeout(res, 1500));
+  }
   return r.depositTxHash;
 }
 
