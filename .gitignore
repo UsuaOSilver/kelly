@@ -5,3 +5,4 @@ cache
 artifacts
 server/data
 *.log
+contracts/deployments/localhost.json
