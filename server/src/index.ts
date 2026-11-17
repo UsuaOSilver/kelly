@@ -16,6 +16,17 @@ app.use(express.json({ limit: "10mb" }));
 await init();
 app.use("/sellers", await sellersRouter(sellers));
 
+/**
+ * The tunnel exists so QuickNode can reach /webhooks. Everything that can move money or reveal state stays
+ * on this machine: a request that came through a tunnel or proxy carries a forwarding header and is refused.
+ * The paid /sellers endpoints stay public on purpose, since anyone may buy from them.
+ */
+const viaProxy = (req: express.Request) => Boolean(req.header("cf-connecting-ip") || req.header("x-forwarded-for") || req.header("x-real-ip"));
+app.use(["/api", "/"], (req, res, next) => {
+  if (process.env.ALLOW_REMOTE_CONTROL === "true" || !viaProxy(req) || req.path.startsWith("/webhooks") || req.originalUrl.startsWith("/sellers")) return next();
+  res.status(403).json({ error: "Kelly's controls are only available on the machine running it." });
+});
+
 const tool = (fn: (body: any) => Promise<unknown>) => async (req: express.Request, res: express.Response) => res.json(await fn(req.body ?? {}));
 app.post("/api/tools/scan", tool((b) => scan(b.asset)));
 app.post("/api/tools/propose", tool((b) => propose({ usd: b.usd == null || b.usd === "" ? undefined : Number(b.usd), symbol: b.symbol || undefined, side: b.side || undefined })));
