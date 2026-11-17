@@ -14,6 +14,14 @@ if (!apiKey) throw new Error("Set QUICKNODE_API_KEY in .env (QuickNode dashboard
 if (/localhost|127\.0\.0\.1/.test(cfg.publicUrl)) throw new Error("PUBLIC_URL must be reachable from the internet (see README → Public URL).");
 
 const dep = loadDeployment();
+
+// Make sure the tunnel actually reaches this server before QuickNode is pointed at it.
+try {
+  const ping = await fetch(`${cfg.publicUrl}/api/config`, { signal: AbortSignal.timeout(8000) });
+  if (!ping.ok) throw new Error(`HTTP ${ping.status}`);
+} catch (e) {
+  throw new Error(`${cfg.publicUrl} does not reach the Kelly server (${(e as Error).message}). Start the server and the tunnel first.`);
+}
 const token = cfg.quicknodeToken || crypto.randomBytes(24).toString("hex");
 const body = {
   name: "kelly-vault-events",
@@ -23,8 +31,10 @@ const body = {
   region: "usa_east",
   start_range: dep.deployBlock,
   end_range: -1,
-  dataset_batch_size: 1,
-  include_stream_metadata: "body",
+  // Arc produces a block about every 0.7 s; tip-following Streams on sub-second chains need a batch of at least 5.
+  // Elastic batching delivers whatever is ready instead of waiting for the batch to fill.
+  dataset_batch_size: 5,
+  elastic_batch_enabled: true,
   destination: "webhook",
   fix_block_reorgs: 0,
   keep_distance_from_tip: 0,

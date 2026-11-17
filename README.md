@@ -145,12 +145,15 @@ The Stream is what tells Kelly that money moved. With `EVENT_SOURCE=quicknode` t
 
 | Setting | Value | Why |
 |---|---|---|
-| Network | Arc testnet | where the vault lives |
+| Network | `arc-testnet` | where the vault lives |
 | Dataset | `block_with_receipts` | logs with their transaction hashes |
+| Batch | 5 blocks, elastic | Arc makes a block about every 0.7 s; QuickNode requires a batch of at least 5 on sub-second chains, and elastic batching delivers without waiting for the batch to fill |
 | Filter | keep logs whose `address` is the vault, drop the block otherwise ([`server/src/quicknode.ts`](server/src/quicknode.ts)) | the webhook gets a few hundred bytes per relevant block and nothing else |
-| Start | the vault's deploy block | backfills history after a restart |
+| Start | the vault's deploy block | backfills the vault's full history when the Stream is created |
 | Destination | webhook `POST {PUBLIC_URL}/webhooks/quicknode` | pushes into the same handler as every other event source |
 | Auth | shared secret in a custom `X-Kelly-Token` header, compared in constant time | set on the destination, checked on every delivery |
+
+The filter was checked with QuickNode's `test_filter` endpoint on real Arc blocks: block `72635248`, which contains the owner's approval, returns exactly the vault's `Spent` log (the USDC `Transfer` in the same transaction is dropped), and an empty block returns `null`, so nothing is delivered.
 
 No API key, or the API rejects it? `npm run quicknode:manual` prints the same settings and the filter function to paste into the QuickNode dashboard, with the secret carried as `?token=` on the webhook URL.
 
