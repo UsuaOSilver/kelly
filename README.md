@@ -152,6 +152,8 @@ The Stream is what tells Kelly that money moved. With `EVENT_SOURCE=quicknode` t
 | Destination | webhook `POST {PUBLIC_URL}/webhooks/quicknode` | pushes into the same handler as every other event source |
 | Auth | shared secret in a custom `X-Kelly-Token` header, compared in constant time | set on the destination, checked on every delivery |
 
+No API key, or the API rejects it? `npm run quicknode:manual` prints the same settings and the filter function to paste into the QuickNode dashboard, with the secret carried as `?token=` on the webhook URL.
+
 If a delivery is more than 12 seconds late, Kelly catches up once over RPC and labels that ledger line `rpc-fallback`. Create the Stream with `npm run quicknode:setup`. Test the path without a public URL with `npm run stream:replay`, which runs the same filter function locally.
 
 ### ElevenLabs

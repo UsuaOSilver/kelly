@@ -18,6 +18,7 @@
     "quicknode:setup": "npm --prefix server run quicknode:setup",
     "stream:replay": "npm --prefix server exec tsx scripts/replay-stream.ts",
     "smoke": "server/scripts/smoke.sh",
-    "policy": "npm --prefix server run policy --"
+    "policy": "npm --prefix server run policy --",
+    "quicknode:manual": "npm --prefix server run quicknode:manual"
   }
 }

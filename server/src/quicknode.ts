@@ -35,12 +35,13 @@ export const filterSource = (vault: string) => `function main(stream) {
 }`;
 
 /**
- * Authenticates a delivery with a shared secret that we set ourselves as a custom header on the
- * Stream's webhook destination (destination_attributes.headers). Compared in constant time.
+ * Authenticates a delivery with a shared secret that we choose ourselves. It is accepted either as a
+ * custom `X-Kelly-Token` header on the Stream's webhook destination or as `?token=` on the webhook URL
+ * (for Streams created by hand in the dashboard). Compared in constant time.
  */
 export function verifyQuickNode(req: Request): boolean {
   if (!cfg.quicknodeToken) return true; // open only when no token is configured (local testing)
-  const given = Buffer.from(req.header("x-kelly-token") ?? "");
+  const given = Buffer.from(req.header("x-kelly-token") ?? String(req.query.token ?? ""));
   const want = Buffer.from(cfg.quicknodeToken);
   return given.length === want.length && crypto.timingSafeEqual(given, want);
 }
