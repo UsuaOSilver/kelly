@@ -76,4 +76,5 @@ export function loadDeployment(): Deployment {
   return JSON.parse(fs.readFileSync(p, "utf8"));
 }
 
-export const usd = (n: number) => `$${n < 1 ? n.toFixed(n < 0.01 ? 4 : 3).replace(/0+$/, "").replace(/\.$/, "") : n.toFixed(2)}`;
+/** $12.50, $0.40, but $0.005 and $0.0125 for sub-cent data prices. */
+export const usd = (n: number) => `$${n >= 0.1 || n === 0 ? n.toFixed(2) : n.toFixed(4).replace(/0+$/, "").replace(/\.$/, "")}`;

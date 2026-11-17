@@ -1,0 +1,22 @@
+{
+  "name": "kelly",
+  "private": true,
+  "description": "A voice trading desk for Gemini prediction markets that spends from an onchain USDC allowance on Arc.",
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "demo": "npm --prefix server start",
+    "dev:server": "npm --prefix server run dev",
+    "dev:web": "npm --prefix web run dev",
+    "build": "npm --prefix web run build",
+    "test": "npm --prefix contracts test && npm --prefix server test",
+    "keys": "npm --prefix server run keys",
+    "fixture": "npm --prefix server run fixture",
+    "chain": "npm --prefix contracts run node",
+    "deploy:local": "npm --prefix contracts run deploy:local",
+    "deploy:arc": "npm --prefix contracts run deploy:arc",
+    "elevenlabs:setup": "npm --prefix server run elevenlabs:setup",
+    "quicknode:setup": "npm --prefix server run quicknode:setup",
+    "stream:replay": "npm --prefix server exec tsx scripts/replay-stream.ts",
+    "smoke": "server/scripts/smoke.sh"
+  }
+}

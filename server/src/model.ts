@@ -192,7 +192,7 @@ export function sizeBet(opts: {
     stake = opts.liquidityUsd;
     cappedBy.push("book depth");
   }
-  return { kellyFull, fraction: opts.fraction, bankroll: opts.bankroll, raw: round2(raw), stake: Math.floor(stake * 100) / 100, cappedBy };
+  return { kellyFull, fraction: opts.fraction, bankroll: opts.bankroll, raw: Math.floor(raw * 100) / 100, stake: Math.floor(stake * 100) / 100, cappedBy };
 }
 
 export const round2 = (n: number) => Math.round(n * 100) / 100;

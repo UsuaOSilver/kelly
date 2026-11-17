@@ -34,17 +34,13 @@ export const filterSource = (vault: string) => `function main(stream) {
   return logs.length ? { block: block, logs: logs } : null;
 }`;
 
-/** HMAC-SHA256 over nonce + timestamp + body, per QuickNode's webhook signing scheme. */
+/**
+ * Authenticates a delivery with a shared secret that we set ourselves as a custom header on the
+ * Stream's webhook destination (destination_attributes.headers). Compared in constant time.
+ */
 export function verifyQuickNode(req: Request): boolean {
-  if (!cfg.quicknodeToken) return true; // unsigned deliveries are accepted only when no token is configured (local testing)
-  const nonce = req.header("x-qn-nonce") ?? "";
-  const ts = req.header("x-qn-timestamp") ?? "";
-  const given = req.header("x-qn-signature") ?? "";
-  const body = (req as any).rawBody ? (req as any).rawBody.toString("utf8") : JSON.stringify(req.body);
-  const want = crypto.createHmac("sha256", cfg.quicknodeToken).update(nonce + ts + body).digest("hex");
-  try {
-    return crypto.timingSafeEqual(Buffer.from(given, "hex"), Buffer.from(want, "hex"));
-  } catch {
-    return false;
-  }
+  if (!cfg.quicknodeToken) return true; // open only when no token is configured (local testing)
+  const given = Buffer.from(req.header("x-kelly-token") ?? "");
+  const want = Buffer.from(cfg.quicknodeToken);
+  return given.length === want.length && crypto.timingSafeEqual(given, want);
 }

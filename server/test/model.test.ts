@@ -81,7 +81,7 @@ describe("sizeBet", () => {
   const base = { p: 0.5, price: 0.4, bankroll: 200, fraction: 0.5, remainingToday: 50, liquidityUsd: 1000 };
   it("uses fractional Kelly", () => {
     const s = sizeBet(base);
-    expect(s.raw).toBeCloseTo(16.67, 2);
+    expect(s.raw).toBeCloseTo(16.66, 2);
     expect(s.stake).toBeCloseTo(16.66, 2);
     expect(s.cappedBy).toEqual([]);
   });

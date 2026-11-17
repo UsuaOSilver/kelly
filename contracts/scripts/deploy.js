@@ -19,7 +19,7 @@ async function main() {
 
   const autoApprove = process.env.AUTO_APPROVE_LIMIT_USDC || "10";
   const dailyCap = process.env.DAILY_CAP_USDC || "50";
-  const depositAmt = process.env.VAULT_DEPOSIT_USDC || (local ? "200" : "5");
+  const depositAmt = local ? "200" : process.env.VAULT_DEPOSIT_USDC || "5";
 
   let usdcAddr, agent, venue, sellers;
   if (local) {

@@ -11,8 +11,7 @@ import { sellers } from "./agent.ts";
 
 const app = express();
 app.use(cors());
-// Keep the raw body: the QuickNode signature is computed over the exact bytes delivered.
-app.use(express.json({ limit: "10mb", verify: (req, _res, buf) => ((req as any).rawBody = buf) }));
+app.use(express.json({ limit: "10mb" }));
 
 await init();
 app.use("/sellers", await sellersRouter(sellers));
@@ -65,7 +64,7 @@ app.get("/api/eleven/signed-url", async (_req, res) => {
 
 /** QuickNode Streams destination. The Stream's filter has already reduced each block to this vault's logs. */
 app.post("/webhooks/quicknode", (req, res) => {
-  if (!verifyQuickNode(req)) return void res.status(401).json({ error: "bad signature" });
+  if (!verifyQuickNode(req)) return void res.status(401).json({ error: "bad token" });
   const batches = Array.isArray(req.body) ? req.body : [req.body];
   let n = 0;
   for (const b of batches) {
